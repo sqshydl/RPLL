@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
+// Komponen TimerBox untuk menampilkan dan mengelola timer
 function TimerBox({ pcName }) {
+  // State untuk menyimpan ID interval timer, total detik, dan biaya
   const [timer, setTimer] = useState(null);
   const [totalSeconds, setTotalSeconds] = useState(0);
   const [cost, setCost] = useState(0);
 
+  // Menghentikan interval timer saat komponen dibongkar
   useEffect(() => {
     return () => {
       clearInterval(timer);
     };
   }, [timer]);
 
+  // Fungsi untuk mengupdate timer setiap detik
   function updateTimer() {
     if (totalSeconds > 0) {
       setTotalSeconds((prevSeconds) => prevSeconds - 1);
@@ -23,16 +27,18 @@ function TimerBox({ pcName }) {
     }
   }
 
+  // Fungsi untuk memformat waktu dalam format menit:detik
   function formatTime(remainingSeconds) {
     const minutes = Math.floor(remainingSeconds / 60);
     const seconds = remainingSeconds % 60;
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   }
 
+  // Fungsi untuk memulai atau menghentikan timer
   function startTimer() {
     if (!timer && totalSeconds > 0) {
       setTimer(setInterval(updateTimer, 1000));
-      // Calculate cost at the start of the timer
+      // Menghitung biaya saat memulai timer
       const initialCost = calculateCost(totalSeconds);
       setCost(initialCost);
     } else {
@@ -41,20 +47,24 @@ function TimerBox({ pcName }) {
     }
   }
 
+  // Fungsi untuk menambah waktu 30 menit
   function add30Minutes() {
     setTotalSeconds((prevSeconds) => prevSeconds + 30 * 60);
   }
 
+  // Fungsi untuk mengurangi waktu 30 menit (minimum 0)
   function subtract30Minutes() {
     setTotalSeconds((prevSeconds) => Math.max(0, prevSeconds - 30 * 60));
   }
 
+  // Fungsi untuk menghitung biaya berdasarkan total detik
   function calculateCost(seconds) {
     const halfHourBlocks = seconds / (30 * 60);
     const costPerHalfHour = 2500;
     return Math.ceil(halfHourBlocks) * costPerHalfHour;
   }  
 
+  // Render TimerBox dengan kontrol timer dan tampilan sisa waktu dan biaya
   return (
     <div className="timer-box">
       <h2>{pcName}</h2>
@@ -71,9 +81,12 @@ function TimerBox({ pcName }) {
   );
 }
 
+// Komponen App untuk menampilkan beberapa TimerBox
 function App() {
+  // Daftar nama PC
   const pcNames = ['PS 1', 'PS 2', 'PS 3', 'PS 4', 'PS 5', 'PS 6', 'PS 7', 'PS 8'];
 
+  // Render App dengan TimerBox untuk setiap PC
   return (
     <div className="grid-container">
       {pcNames.map((pcName) => (
@@ -83,4 +96,5 @@ function App() {
   );
 }
 
+// Ekspor komponen App sebagai default
 export default App;
