@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import Clock from './clock'; // Import the Clock component
 import './App.css';
+
 
 // Komponen TimerBox untuk menampilkan dan mengelola timer
 function TimerBox({ pcName }) {
@@ -92,6 +94,7 @@ function App() {
       {pcNames.map((pcName) => (
         <TimerBox key={pcName} pcName={pcName} />
       ))}
+      <Clock /> {/* Add the Clock component */}
     </div>
   );
 }
