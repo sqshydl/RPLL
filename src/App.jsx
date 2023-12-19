@@ -9,6 +9,7 @@ function TimerBox({ pcName }) {
   const [timer, setTimer] = useState(null);
   const [totalSeconds, setTotalSeconds] = useState(0);
   const [cost, setCost] = useState(0);
+  const [shouldUpload, setShouldUpload] = useState(true);
 
   // Menghentikan interval timer saat komponen dibongkar
   useEffect(() => {
@@ -55,33 +56,61 @@ function TimerBox({ pcName }) {
 
   // Fungsi untuk memulai atau menghentikan timer
   async function startTimer() {
-    if (!timer && totalSeconds > 0) {
-      // Calculate initial cost
+    if (timer) {
+      // Pause timer
+      clearInterval(timer);
+      setTimer(null);
+    } else if (totalSeconds > 0) {
+      // Start timer if there is time remaining
       const initialCost = calculateCost(totalSeconds);
       setCost(initialCost);
   
-      // Insert initial data into the database
-      const currentDate = new Date().toISOString().split('T')[0];
-      const currentTime = new Date().toLocaleTimeString();
-      await insertData(pcName, initialCost, currentDate, currentTime);
+      // Upload initial data only if not paused
+      if (shouldUpload) {
+        const currentDate = new Date().toISOString().split('T')[0];
+        const currentTime = new Date().toLocaleTimeString();
+        await insertData(pcName, initialCost, currentDate, currentTime);
+        setShouldUpload(false); // Prevent uploading during ongoing timer
+      }
   
-      // Do not set up any interval here
-    } else {
-      clearInterval(timer);
-      setTimer(null);
+      // Set up the interval to update timer and calculate cost
+      setTimer(
+        setInterval(() => {
+          updateTimer();
+          const currentCost = calculateCost(totalSeconds);
+  
+          // Check if timer is still running before uploading
+          if (timer && shouldUpload) {
+            const currentDate = new Date().toISOString().split('T')[0];
+            const currentTime = new Date().toLocaleTimeString();
+            insertData(pcName, currentCost, currentDate, currentTime);
+            setShouldUpload(false); // Prevent uploading during ongoing timer
+          }
+  
+          // Check if timer reached 0
+          if (totalSeconds === 0) {
+            clearInterval(timer);
+            setTimer(null);
+          }
+        }, 1000)
+      );
     }
   }
   
+  
 
   // Fungsi untuk menambah waktu 30 menit
-  function add30Minutes() {
-    setTotalSeconds((prevSeconds) => prevSeconds + 30 * 60);
-  }
+function add30Minutes() {
+  setTotalSeconds((prevSeconds) => prevSeconds + 30 * 60);
+  setShouldUpload(true); // Allow uploading after adding time
+}
 
   // Fungsi untuk mengurangi waktu 30 menit (minimum 0)
   function subtract30Minutes() {
     setTotalSeconds((prevSeconds) => Math.max(0, prevSeconds - 30 * 60));
+    setShouldUpload(true); // Allow uploading after subtracting time
   }
+  
 
   // Fungsi untuk menghitung biaya berdasarkan total detik
   function calculateCost(seconds) {
