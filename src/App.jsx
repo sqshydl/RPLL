@@ -17,6 +17,23 @@ function TimerBox({ pcName }) {
     };
   }, [timer]);
 
+  async function insertData(pcName, totalProfit, date, time) {
+    try {
+      const response = await fetch('http://localhost:3001/insert', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pcName, totalProfit, date, time }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error('Error inserting data:', error.message);
+    }
+  }
+
   // Fungsi untuk mengupdate timer setiap detik
   function updateTimer() {
     if (totalSeconds > 0) {
@@ -37,17 +54,24 @@ function TimerBox({ pcName }) {
   }
 
   // Fungsi untuk memulai atau menghentikan timer
-  function startTimer() {
+  async function startTimer() {
     if (!timer && totalSeconds > 0) {
-      setTimer(setInterval(updateTimer, 1000));
-      // Menghitung biaya saat memulai timer
+      // Calculate initial cost
       const initialCost = calculateCost(totalSeconds);
       setCost(initialCost);
+  
+      // Insert initial data into the database
+      const currentDate = new Date().toISOString().split('T')[0];
+      const currentTime = new Date().toLocaleTimeString();
+      await insertData(pcName, initialCost, currentDate, currentTime);
+  
+      // Do not set up any interval here
     } else {
       clearInterval(timer);
       setTimer(null);
     }
   }
+  
 
   // Fungsi untuk menambah waktu 30 menit
   function add30Minutes() {
