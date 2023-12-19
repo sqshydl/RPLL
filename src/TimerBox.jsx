@@ -117,16 +117,24 @@ function TimerBox({ pcName }) {
   
     // Render TimerBox dengan kontrol timer dan tampilan sisa waktu dan biaya
     return (
-      <div className="timer-box">
-        <h2>{pcName}</h2>
-        <div className="timer-controls">
-          <button onClick={startTimer}>{timer ? 'Pause Timer' : 'Start Timer'}</button>
-          <button onClick={add30Minutes}>+30</button>
-          <button onClick={subtract30Minutes}>-30</button>
-        </div>
-        <div className="timer-display">
-          <p>Remaining Time: {formatTime(totalSeconds)}</p>
-          <p>Cost: Rp. {cost.toLocaleString()}</p>
+        <div className="grid grid-cols-2 gap-4 p-4 bg-nishiki-1 text-nishiki-5">
+        <div className="timer-box bg-nishiki-3 shadow-md rounded-lg p-4">
+          <h2 className="text-xl font-bold mb-4 text-nishiki-2">{pcName}</h2>
+          <div className="timer-controls flex justify-between mb-4">
+            <button className="bg-nishiki-4 text-nishiki-5 rounded px-4 py-2" onClick={startTimer}>
+              {timer ? 'Pause Timer' : 'Start Timer'}
+            </button>
+            <button className="bg-nishiki-4 text-nishiki-5 rounded px-4 py-2" onClick={add30Minutes}>
+              +30
+            </button>
+            <button className="bg-nishiki-4 text-nishiki-5 rounded px-4 py-2" onClick={subtract30Minutes}>
+              -30
+            </button>
+          </div>
+          <div className="timer-display">
+            <p className="mb-2 text-nishiki-2">Remaining Time: {formatTime(totalSeconds)}</p>
+            <p className="text-nishiki-2">Cost: Rp. {cost.toLocaleString()}</p>
+          </div>
         </div>
       </div>
     );

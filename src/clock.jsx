@@ -15,7 +15,7 @@ function Clock() {
   const formattedDate = currentDateTime.toLocaleDateString();
 
   return (
-    <div className="clock">
+    <div className="fixed top-0 right-0 m-9 font-mono">
       <p>{formattedTime}</p>
       <p>{formattedDate}</p>
     </div>
