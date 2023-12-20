@@ -42,6 +42,7 @@ function TimerBox({ pcName }) {
     } else {
       clearInterval(timer);
       setTimer(null);
+      setTotalSeconds(0);
       console.log(`Timer reached 0 for ${pcName}`);
     }
   }
