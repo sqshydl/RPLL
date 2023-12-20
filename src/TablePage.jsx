@@ -12,7 +12,6 @@ const TablePage = () => {
   };
 
   // Menggunakan useEffect untuk memanggil data saat komponen pertama kali dimuat
-  useEffect(() => {
     const fetchData = async () => {
       // Mengambil data dari server
       const result = await axios("/api/get-data"); // Updated URL
@@ -21,6 +20,7 @@ const TablePage = () => {
     };
 
     // Memanggil fungsi fetchData
+    useEffect(() => {
     fetchData();
   }, []);
 
@@ -78,6 +78,12 @@ setData(sortedData);
           onClick={() => sortData("time")}
         >
           Sort by Time {sortField === "time" ? (sortDirection ? "↑" : "↓") : ""}
+        </button>
+        <button
+          className="bg-nishiki-3 text-nishiki-4 py-2 px-4 rounded m-2"
+          onClick={fetchData}
+        >
+          Refresh Data
         </button>
       </div>
       {/* Tabel untuk menampilkan data */}
