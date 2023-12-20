@@ -7,6 +7,10 @@ const TablePage = () => {
   const [sortField, setSortField] = useState(null);
   const [sortDirection, setSortDirection] = useState(true);
 
+  const toggleSortDirection = () => {
+    setSortDirection(prevSortDirection => !prevSortDirection);
+  };
+
   // Menggunakan useEffect untuk memanggil data saat komponen pertama kali dimuat
   useEffect(() => {
     const fetchData = async () => {
@@ -22,29 +26,33 @@ const TablePage = () => {
 
   // Fungsi untuk mengurutkan data berdasarkan field yang dipilih
   const sortData = (field) => {
-    // Mengurutkan data
-    const sortedData = [...data].sort((a, b) => {
-      // Jika field adalah 'time', kita perlu mengubahnya menjadi Date object
-      if (field === "time") {
-        const timeA = new Date(`1970-01-01T${a[field]}Z`);
-        const timeB = new Date(`1970-01-01T${b[field]}Z`);
-        // Mengembalikan hasil perbandingan timeA dan timeB
-        return sortDirection ? timeA - timeB : timeB - timeA;
-      } else {
-        // Untuk field lainnya, kita bisa langsung membandingkannya
-        if (a[field] < b[field]) return sortDirection ? -1 : 1;
-        if (a[field] > b[field]) return sortDirection ? 1 : -1;
-        return 0;
-      }
-    });
+  // Calculate new sort direction
+  const newSortDirection = !sortDirection;
 
-    // Menyimpan data yang sudah diurutkan ke state
-    setData(sortedData);
-    // Menyimpan field yang digunakan untuk pengurutan
-    setSortField(field);
-    // Mengubah arah pengurutan
-    setSortDirection(field === sortField ? !sortDirection : true);
-  };
+  // Set new sort direction
+  setSortDirection(newSortDirection);
+
+  // Sort data
+const sortedData = [...data].sort((a, b) => {
+  if (field === "time") {
+    // Convert time strings to seconds
+    const timeA = a[field].split(':').reduce((acc, time) => (60 * acc) + parseInt(time, 10), 0);
+    const timeB = b[field].split(':').reduce((acc, time) => (60 * acc) + parseInt(time, 10), 0);
+    // Compare the times in seconds
+    return newSortDirection ? timeA - timeB : timeB - timeA;
+  } else {
+    // For other fields, we can directly compare them
+    if (a[field] < b[field]) return newSortDirection ? -1 : 1;
+    if (a[field] > b[field]) return newSortDirection ? 1 : -1;
+    return 0;
+  }
+});
+
+// Now sortedData contains the sorted array based on the specified field
+
+
+setData(sortedData);
+};
 
   // Render komponen
   return (
@@ -67,9 +75,9 @@ const TablePage = () => {
         </button>
         <button
           className="bg-nishiki-3 text-nishiki-4 py-2 px-4 rounded m-2"
-          onClick={() => sortData("Time")}
+          onClick={() => sortData("time")}
         >
-          Sort by Time {sortField === "Time" ? (sortDirection ? "↑" : "↓") : ""}
+          Sort by Time {sortField === "time" ? (sortDirection ? "↑" : "↓") : ""}
         </button>
       </div>
       {/* Tabel untuk menampilkan data */}
