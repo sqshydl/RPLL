@@ -8,9 +8,10 @@ const TablePage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios('http://localhost:3001/'); // Change this to your server's endpoint
+      const result = await axios('/api/get-data'); // Updated URL
       setData(result.data);
     };
+
 
     fetchData();
   }, []);
@@ -25,11 +26,12 @@ const TablePage = () => {
     setData(sortedData);
     setSortField(field);
     setSortDirection(field === sortField ? !sortDirection : true); // toggle sort direction if the same field is clicked, else sort ascending
-
+    
   };
 
   return (
-    <div className="text-center">
+    <div className="w-full text-center">
+    <div className="inline-block">
       <button className="bg-nishiki-1 text-white py-2 px-4 rounded m-2" onClick={() => sortData('pc_name')}>
         Sort by PC Name {sortField === 'pc_name' ? (sortDirection ? '↑' : '↓') : ''}
       </button>
@@ -39,7 +41,8 @@ const TablePage = () => {
       <button className="bg-nishiki-3 text-nishiki-4 py-2 px-4 rounded m-2" onClick={() => sortData('Time')}>
         Sort by Time {sortField === 'Time' ? (sortDirection ? '↑' : '↓') : ''}
       </button>
-      <table className="table-auto mx-auto mt-4 bg-nishiki-4 text-nishiki-5">
+    </div>
+    <table className="table-auto mx-auto mt-4 bg-nishiki-4 text-nishiki-5 w-full">
         <thead>
           <tr>
             <th className="px-4 py-2">PS Name</th>
@@ -49,14 +52,19 @@ const TablePage = () => {
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(data) && data.map((item, index) => (
-            <tr key={index} className={index % 2 === 0 ? 'bg-nishiki-1' : ''}>
-              <td className="border px-4 py-2">{item.pc_name}</td>
-              <td className="border px-4 py-2">{item.total_profit}</td>
-              <td className="border px-4 py-2">{new Date(item.Date).toLocaleDateString()}</td>
-              <td className="border px-4 py-2">{item.Time}</td>
-            </tr>
-          ))}
+        {Array.isArray(data) && data.map((item, index) => {
+  // Log the date and time values to the console
+  console.log('Item:', item);
+
+  return (
+    <tr key={index} className={index % 2 === 0 ? 'bg-nishiki-1' : ''}>
+      <td className="border px-4 py-2">{item.pc_name}</td>
+      <td className="border px-4 py-2">{item.total_profit}</td>
+      <td className="border px-4 py-2">{new Date(item.date).toLocaleDateString()}</td>
+      <td className="border px-4 py-2">{item.time}</td>
+    </tr>
+  );
+})}
         </tbody>
       </table>
     </div>

@@ -16,7 +16,7 @@ function TimerBox({ pcName }) {
   
     async function insertData(pcName, totalProfit, date, time) {
       try {
-        const response = await fetch('http://localhost:3001/insert', {
+        const response = await fetch('/api/add-data', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
